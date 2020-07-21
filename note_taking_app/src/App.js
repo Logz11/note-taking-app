@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
 
-function MainText({ determineValidSelection, determineLocation, addMainTextHighlight }) {
+function MainText({ determineValidSelection, determineLocation }) {
 
-  const [text, setText] = useState([
+  const [text] = useState([
     {
       content: <p>This course is primarily a comprehensive review of all previous knowledge pertaining to the Spanish language. This class builds upon the skills developed within introductory and intermediate Spanish classes by applying each skill to a specific, contemporary context (health, education, careers, literature, history, family, relationships, and environment being common themes). Thus, the students strive to refine their skills in writing, reading, speaking, and understanding spoken Spanish. Students concentrate on developing proficiency in such skills specifically in preparation for the AP Spanish Language examination. In addition, this course will emphasize mastery of linguistic competencies at a very high level of proficiency.
       Despite the best attempts by the College Board the AP Spanish Language curriculum is very fluid. Individual teachers can choose to present as much or as little information as possible. Because teachers inherently have different methods of pedagogy, issues arise that pertain to the necessity of a standardized Spanish curriculum for the exam. Because the Spanish language is so eclectic and can be tested in a plethora of manners, a more solidified curriculum covering specific vocabulary, verb forms and usages, expressions, and other facets of the language may be required in the future.
@@ -31,11 +31,11 @@ function MainText({ determineValidSelection, determineLocation, addMainTextHighl
   return (
     <section className="main-text">
       {text.map((content, index) => (
-        <div className="text-block" key ={index} index={index}>
-          <div className="selectable-text-area" id={`title-${index}`} onMouseDown={(e) => determineLocation(e)} onMouseUp={() => determineValidSelection()}>
+        <div className="text-block" id={`text-block-${index}`} key ={index} index={index}>
+          <div className="selectable-text-area" id={`title-${index}`} onMouseDown={(e) => determineLocation(e, index)} onMouseUp={() => determineValidSelection()}>
             {content.title}
           </div>
-          <div className="selectable-text-area" id={`content-${index}`} onMouseDown={(e) => determineLocation(e)} onMouseUp={() => determineValidSelection()}>
+          <div className="selectable-text-area" id={`content-${index}`} onMouseDown={(e) => determineLocation(e, index)} onMouseUp={() => determineValidSelection()}>
             {content.content}
           </div>
         </div>
@@ -44,19 +44,52 @@ function MainText({ determineValidSelection, determineLocation, addMainTextHighl
   );
 }
 
-function HighlightButton({ isValid, addNote, handleHighlightBtnClick }){
+function HighlightButton({ isValid, addNote, handleHighlightBtnClick, location }){
 
   const [highlights, setHighlights] = useState();
 
-  const handleHighlightEvent = (e) => {
 
-    const highlight = addNote();
-    setHighlights(highlight);
+  // const btnWidth = getComputedStyle(highlightBtn).width.slice(0, -2); btnWidth*0.5
+  // const btnHeight = getComputedStyle(highlightBtn).height.slice(0, -2); btnHeight*0.5
+  const invisible = { display: 'none', top: '0px', left: '0px' };
+
+  useEffect(() => {
+    if (isValid) {
+      const highlightBtn = document.querySelector('button');
+
+      const btnWidth = getComputedStyle(highlightBtn).width.slice(0, -2);
+      const btnHeight = getComputedStyle(highlightBtn).height.slice(0, -2);
+
+      const visible = { display: 'block', top: `${location.coordY - btnHeight}px`, left: `${location.coordX - btnWidth}px` };
+
+      setHighlights(visible);
+    } else {
+      setHighlights(invisible);
+    }
+  }, [location, isValid])
+
+  const handleHighlightEvent = () => {
+    addNote();
     handleHighlightBtnClick(true);
+    setHighlights(invisible);
   };
 
+  // const determineButtonStyles = () => {
+  //   if(isValid){
+  //     return (
+  //       console.log('visible'),
+  //       { display: 'block', top: `${location.coordY}px`, left: `${location.coordX}px` }
+  //     );
+  //   } else {
+  //     return (
+  //       console.log('not visible'),
+  //       { display: 'none', top: '0px', left: '0px' }
+  //     );
+  //   }
+  // };
+
   return (
-    <button id="highlight-btn" style={{ display: !isValid ? 'none' : 'block' }} title="Click to Highlight this Selection" className="fas fa-highlighter" onClick={(e) => handleHighlightEvent(e)}></button>
+    <button id="highlight-btn" style={highlights} title="Click to Highlight this Selection" className="fas fa-highlighter" onClick={(e) => handleHighlightEvent(e)}></button>
   );
 }
 
@@ -65,17 +98,12 @@ function SidebarItem({ note, index }){
   const [location, setLocation] = useState();
 
   useEffect(() => {
-    setLocation({ coordX: note.startCoordX, coordY: note.startCoordY })
-  }, [note.startCoordX, note.startCoordY]);
+    setLocation({ coordX: note.startCoordX, coordY: note.startCoordY, highlightLink: note.highlightLink })
+  }, [note.startCoordX, note.startCoordY, note.highlightLink]);
 
   const handleListLinkEvent = () => {
-    const section = document.querySelector('section');
-    const div = document.querySelector(`#content-${index}`)
-    //const span = document.querySelector(`location-${index}`);
-    //console.log(document.querySelector(`content-${index}`));
-    console.log(section.scrollTop);
-    section.scrollTo(div.coordX, div.coordY);
-    console.log(location);
+    const targetHighlightLink = document.querySelector(location.highlightLink);
+    targetHighlightLink.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
   };
 
   return(
@@ -90,7 +118,7 @@ function SidebarItem({ note, index }){
 
 function App() {
 
-  const [location, setLocation] = useState({coordX: 0, coordY: 0});
+  const [location, setLocation] = useState({ coordX: 0, coordY: 0, highlightLink: ''});
 
   const [isValid, setValidityValue] = useState(false);
   
@@ -111,7 +139,7 @@ function App() {
   }, [isValid]);
 
   const addNote = () => {
-    const compiledNote = { startCoordX: location.coordX, startCoordY: location.coordY, text };
+    const compiledNote = { startCoordX: location.coordX, startCoordY: location.coordY, highlightLink: location.highlightLink, text };
     const newNotes = [...notes, compiledNote ]
     setNotes(newNotes);
     return(
@@ -122,10 +150,14 @@ function App() {
   const determineLocation = (e) => {
     const x = e.pageX;
     const y = e.pageY;
-    setLocation({ coordX: x, coordY: y });
+    //const parentContainer = e.target.parentElement.id;
+    const highlightLink=`span#location-${document.querySelectorAll('span').length-1}`;
+    //console.log(highlightLink);
+    setLocation({ coordX: x, coordY: y, highlightLink: highlightLink });
+    setValidityValue(false);
   };
 
-  const addMainTextHighlight = (index) => {
+  const addMainTextHighlight = () => {
 
     function windowSelect() {
       return(window.getSelection());
@@ -168,6 +200,7 @@ function App() {
     p[selectedChild].normalize();
 
     windowSelect().removeAllRanges();
+    setValidityValue(false);
   };
 
   const handleHighlightBtnClick = (btnClicked) => {
@@ -180,7 +213,7 @@ function App() {
     <div className="App">
       <header>
         <h1>AP Spanish Language and Culture</h1>
-        <HighlightButton isValid={isValid} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
+        <HighlightButton isValid={isValid} location={location} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
       </header>
       <main className="text-container">
         <MainText determineValidSelection={setValidityValue} determineLocation={determineLocation} addMainTextHighlight={addMainTextHighlight} />
