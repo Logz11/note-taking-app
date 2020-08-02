@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import Home from './pages/Home.js';
+
 
 function MainText({ determineValidSelection, determineLocation }) {
 
@@ -210,23 +213,34 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header>
-        <h1>AP Spanish Language and Culture</h1>
-        <HighlightButton isValid={isValid} location={location} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
-      </header>
-      <main className="text-container">
-        <MainText determineValidSelection={setValidityValue} determineLocation={determineLocation} addMainTextHighlight={addMainTextHighlight} />
-        <aside>
-          <h2>Notey notes</h2>
-          <ol>
-            {notes.map((note, index) => (
-              <SidebarItem key={index} index={index} note={note}  />
-            ))}
-          </ol>
-        </aside>
-      </main>
-    </div>
+    <Router>
+      <div className="App">
+        <Link to="/">Home</Link>
+        <Link to="/notes">Notey</Link>
+        <Switch>
+          <Route path="/notes" render={() => (
+            <React.Fragment>
+              <header>
+                <h1>AP Spanish Language and Culture</h1>
+                <HighlightButton isValid={isValid} location={location} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
+              </header>
+              <main className="text-container">
+                <MainText determineValidSelection={setValidityValue} determineLocation={determineLocation} addMainTextHighlight={addMainTextHighlight} />
+                <aside>
+                  <h2>Notey notes</h2>
+                  <ol>
+                    {notes.map((note, index) => (
+                      <SidebarItem key={index} index={index} note={note} />
+                    ))}
+                  </ol>
+                </aside>
+              </main>
+            </React.Fragment>
+          )} />
+          <Route path="/" component={Home} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
@@ -235,104 +249,4 @@ export default App;
 
 /* --------------------------------------------- */
 /* GRAVEYARD */
-/* ---------------------------------------------
-
-  *****POTENTIALLY USEFUL FOR ADD HIGHLIGHT COMPONENT FUNCTION*******
-  
-    //if (e.target.classList.contains('selectable-text-area')){
-      //setValue(window.getSelection().toString().trim());
-      //addHighlight(value);
-      //setValue('');
-
-      { display: isValid ? "block" : "none" }
-
-        const addNote = (text) => {
-    const newNotes = [...notes, { text }];
-    setNotes(newNotes);
-  };
-
-    const [notes, setNotes] = useState([
-    {
-      text: 'test test test test test test test test test test test.'
-    },
-  ]);
-
-
-          {notes.map((note, index) => (
-            <SidebarItem key={index} index={index} note={note} />
-          ))}
-
-            const checkTextTestTest = () => {
-    var isValidTextSelection;
-    const selectedText = window.getSelection().toString().trim();
-    if (selectedText.length > 0) {
-      console.log('checkTextTestTest If Statement Triggered - Pre Check;');
-      console.log('isValidTextSelection: ', isValidTextSelection);
-      console.log('isValid (State var): ', isValid);
-      isValidTextSelection = true;
-      setValidityValue(isValidTextSelection);
-    } else {
-      console.log('checkTextTestTest Else Statement Triggered - Pre Check;');
-      console.log('isValidTextSelection: ', isValidTextSelection);
-      console.log('isValid (State var): ', isValid);
-      isValidTextSelection = false;
-      setValidityValue(isValidTextSelection);
-    }
-    console.log('checkTextTestTest - Post Check;');
-    console.log('isValidTextSelection: ', isValidTextSelection);
-    console.log('isValid (State var): ', isValid);
-  };
-
-    const determineCoords = (win) => {
-    win = win || window;
-    var doc = win.document;
-    var sel = doc.selection, range, rects, rect;
-    var x = 0, y = 0;
-    if (sel) {
-      if (sel.type != "Control") {
-        range = sel.createRange();
-        range.collapse(true);
-        x = range.boundingLeft;
-        y = range.boundingTop;
-      }
-    } else if (win.getSelection) {
-      sel = win.getSelection();
-      if (sel.rangeCount) {
-        range = sel.getRangeAt(0).cloneRange();
-        if (range.getClientRects) {
-          range.collapse(true);
-          rects = range.getClientRects();
-          if (rects.length > 0) {
-            rect = rects[0];
-          }
-          x = rect.left;
-          y = rect.top;
-        }
-        // Fall back to inserting a temporary element
-        if (x == 0 && y == 0) {
-          var span = doc.createElement("span");
-          if (span.getClientRects) {
-            // Ensure span has dimensions and position by
-            // adding a zero-width space character
-            span.appendChild(doc.createTextNode("\u200b"));
-            range.insertNode(span);
-            rect = span.getClientRects()[0];
-            x = rect.left;
-            y = rect.top;
-            var spanParent = span.parentNode;
-            spanParent.removeChild(span);
-
-            // Glue any broken text nodes back together
-            spanParent.normalize();
-          }
-        }
-      }
-    }
-
-    console.log('x: ', x, 'y: ', y );
-  }
-
-            {notes.map((note, index) => (
-
-          ))}
-*/
+/* ---------------------------------------------*/
