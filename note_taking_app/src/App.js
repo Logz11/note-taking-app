@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import './App.css';
+import './styles/App.css';
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import Home from './pages/Home.js';
+import Home from './components/pages/Home.js';
+import { makeStyles, withTheme } from "@material-ui/core/styles";
+import { Drawer } from "@material-ui/core";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 
 
 function MainText({ determineValidSelection, determineLocation }) {
@@ -118,6 +122,24 @@ function SidebarItem({ note, index }){
   );
 }
 
+const useStyles = makeStyles({
+  drawerPaper: {
+    width: "inherit",
+    display: "inline-block",
+    height: "40px",
+    overflowY: "hidden",
+  },
+  menuArrowStyles: {
+    color: "#4db9c8",
+    fontSize: "300%",
+    position: "absolute",
+    textAlign: "center",
+    left: `${window.innerWidth / 2}px`,
+    transform: "translate(0, -20px)",
+    display: "block",
+  },
+});
+
 
 function App() {
 
@@ -128,6 +150,10 @@ function App() {
   const [text, setText] = useState('');
 
   const [notes, setNotes] = useState([]);
+
+  const [isOpen, setMenuOpen] = useState(false);
+
+  const classes = useStyles();
 
   useEffect(() => {
 
@@ -212,19 +238,43 @@ function App() {
       }
   };
 
+  const handleMenuOpen = (e) => {
+    let y = e.clientY;
+
+    if(y <= 40){
+      setMenuOpen(true);
+    }
+    else{
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <Router>
-      <div className="App">
-        <Link to="/">Home</Link>
-        <Link to="/notes">Notey</Link>
+      <div className="App" onMouseMove={(e) => handleMenuOpen(e)}>
+      <div>
+        <Drawer
+          variant="temporary"
+          anchor="top"
+          open={isOpen}
+          classes={{ paper: classes.drawerPaper }}
+          >
+            <Link to="/" style={{ left: `${window.innerWidth / 2}px` }} >Home</Link>
+            &nbsp;|&nbsp;
+            <Link to="/notes">Notey</Link>
+            <ArrowDropUpIcon className={classes.menuArrowStyles} />
+        </Drawer>
+        
+        <ArrowDropDownIcon className={classes.menuArrowStyles} />
+      </div>
         <Switch>
           <Route path="/notes" render={() => (
             <React.Fragment>
               <header>
                 <h1>AP Spanish Language and Culture</h1>
-                <HighlightButton isValid={isValid} location={location} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
               </header>
               <main className="text-container">
+                <HighlightButton isValid={isValid} location={location} addNote={addNote} handleHighlightBtnClick={handleHighlightBtnClick} />
                 <MainText determineValidSelection={setValidityValue} determineLocation={determineLocation} addMainTextHighlight={addMainTextHighlight} />
                 <aside>
                   <h2>Notey notes</h2>
@@ -249,4 +299,17 @@ export default App;
 
 /* --------------------------------------------- */
 /* GRAVEYARD */
-/* ---------------------------------------------*/
+/* ---------------------------------------------
+
+        <Drawer
+          variant="persistent"
+          anchor="top"
+          open={true}
+          classes={{ paper: classes.drawerPaper }} 
+          >
+          <Link to="/">Home</Link>
+          &nbsp;|&nbsp;
+          <Link to="/notes">Notey</Link>
+        </Drawer>
+
+*/
