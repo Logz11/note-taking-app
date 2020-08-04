@@ -35,7 +35,7 @@ export default function Home() {
                 </Grid>
                 <Grid item>
                     <Typography variant="body1" color="secondary">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        Welcome to Notey Notes, the smarter note-taking platform designed to make your study sessions collaborative at a CDC-approved distance. Notey learns alongside you and your classmates and will recommend highlights based on what other students found important. As you highlight, Notey will identify where you might need more practice and tailor study materials—like flashcards and end-of-section quizzes—to meet your needs so you can ace that next exam.
                     </Typography>
                 </Grid>
                 <Grid item container
