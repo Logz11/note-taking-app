@@ -3,14 +3,18 @@ import Background from "../../styles/studying.jpg";
 import { Button, Typography } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import classNames from "classnames";
 import AlertModal from '../AlertModal.js'
+import theme from '../../styles/theme.js';
 
 export default function Home() {
 
-    const useStyles = makeStyles({
-        helloWorldStyle: {
-            fontStyle: 'oblique'
+    const useStyles = makeStyles(theme =>({
+        titleStyle: {
+            fontStyle: 'oblique',
+            color: theme.palette.primary.main,
+        },
+        bodyTextStyle: {
+            color: theme.palette.secondary,
         },
         landingPage: {
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${Background})`,
@@ -18,9 +22,10 @@ export default function Home() {
             backgroundPosition: 'center',
             height: '100%',
         },
-    });
+    }));
 
     const classes = useStyles();
+    console.log(theme.palette);
     
     return (
         <div className={classes.landingPage}>
@@ -29,7 +34,7 @@ export default function Home() {
             direction="column"
             justify="space-around">
                 <Grid item>
-                    <Typography className={classes.helloWorldStyle} color="primary" variant="h1" style={{minWidth: '143px'}}>
+                    <Typography className={classes.titleStyle} variant="h1">
                         Notey Notes
                     </Typography>
                 </Grid>

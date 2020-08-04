@@ -13,19 +13,11 @@ export default function AlertModal() {
     
     const [open, setOpen] = useState(false);
 
-    const useStyles = makeStyles({
-        buttonStyles: {
-            borderRadius: '200px',
-            textTransform: 'lowercase',
-            fontWeight: 'bold',
-        },
-        buttonGhost: {
-
-        },
+    const useStyles = makeStyles(theme => ({
         buttonFull: {
-            color: 'white',
+            color: theme.palette.secondary.main,
         },
-    });
+    }));
 
     const classes = useStyles();
 
@@ -40,10 +32,10 @@ export default function AlertModal() {
     return (
         <React.Fragment>
             <Grid item xs={3}>
-                <Button color="primary" variant="contained" className={classNames(classes.buttonStyles, classes.buttonFull)} onClick={() => handleClickOpen()}>Get Started</Button>
+                <Button color="primary" variant="contained" className={classes.buttonFull} onClick={() => handleClickOpen()}>Get Started</Button>
             </Grid>
             <Grid item xs={3}>
-                <Button color="primary" variant="outlined" className={classes.buttonStyles} onClick={() => handleClickOpen()}>Subscribe</Button>
+                <Button color="primary" variant="outlined" onClick={() => handleClickOpen()}>Subscribe</Button>
             </Grid>
             <Dialog
                 open={open}

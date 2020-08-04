@@ -122,7 +122,7 @@ function SidebarItem({ note, index }){
   );
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: "inherit",
     display: "inline-block",
@@ -130,7 +130,7 @@ const useStyles = makeStyles({
     overflowY: "hidden",
   },
   menuArrowStyles: {
-    color: "#4db9c8",
+    color: theme.palette.primary.light,
     fontSize: "300%",
     position: "absolute",
     textAlign: "center",
@@ -138,7 +138,7 @@ const useStyles = makeStyles({
     transform: "translate(0, -20px)",
     display: "block",
   },
-});
+}));
 
 
 function App() {
